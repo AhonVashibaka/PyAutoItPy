@@ -1,4 +1,6 @@
-Russian
+PyAutoItPy
+
+Русский (English below)
 Обертка функций AutoIt для работы с окнами и контролам под Python 3.3
 
 Пробрасывает функции из библиотеки AutoItX в питон, позволяя использовать из напрямую из кода на питоне.
@@ -22,14 +24,60 @@ AutoIt есть в самом питоне, и необходимости их �
 Скопировать папку PyAutoItPy в <папка Python>\Lib\site-packages
 
 Использование:
+# Импортируем объект AutoItX
+from PyAutoItPy import AutoItX
 
-from PyAutoItPy import AutoItX # Импортируем объект AutoItX
+# Инициализируем объект AutoItX, он подгрузит и настроит соотв. dll AutoIt.
+Automater = AutoItX()
+# Все функции доступны как методы объекта AutoItX, их имена соответствуют языку AutoIt.
+#Тут мы проверяем наличие окна.
+isMyWindow = Automater.WinExists('WindowTitle', 'WindowText') 
 
-Automater = AutoItX() # Инициализируем объект AutoItX, он подгрузит и настроит соотв. dll AutoIt.
-
-isMyWindow = Automater.WinExists('WindowTitle', 'WindowText') # Все функции доступны как методы объекта AutoItX, их имена соответствуют языку AutoIt. Тут мы проверяем наличие окна.
-if isMyWindow: # Шалим
+# Шалим
+if isMyWindow: 
     print('Sucsess!') 
 
-English
+English ReadMe
+
 AutoIt Windows and Controls functions wrapper for Python 3.3 
+ 
+Python module named PyAutoItPy to work with AutoIt.
+In short AutoIt is a script VB-like language targeted to automate Windows OS. It can be used to manipulate windows and controls in windows to emulate user actions.
+AutoIt wiki:
+https://www.autoitscript.com/wiki
+
+Advantages:
+1. NO AutoIt installation needed.
+2. NO need to install PyWin32. All done thru standart module "ctypes".
+3. All AutoItX object method names are equivalent to corresponding AutoItX language functions
+4. Works on 32x and 64x Windows OS. 
+5. Python class to work with windows states is included. In example it allow compare states using ">" "<" ">=" "==" "<=" operators. Also included classes and named tuples to work with windows and controls coordinates, MsgBox values and so on.
+
+
+Disadvantages:
+1. Beta, can be dangerous :)
+2. No setup, planned.
+3. Not all functions wrapped. More in future releases.
+4. Checked only on Python 3.3. Compatibility with other versions not guaranteed!
+
+Installation:
+
+Just copy folder "PyAutoItPy" to <Python folder>\Lib\site-packages
+
+Usage(small example):
+
+# Importing AutoItX object
+# If you need all funcionality: from PyAutoItPy import * 
+from PyAutoItPy import AutoItX 
+
+# Initialising AutoItX object. Object will load and setup AutoItX.dll
+Automater = AutoItX() 
+
+# All AutoIt functions are wrapped in methods of created object.
+# All methods names are similar to AutoIt language functions.
+# In this case we are using "WinExists" to determine existance of particular window.
+isMyWindow = Automater.WinExists('myWindowTitle', 'myWindowText') 
+
+# Do something with result.
+if isMyWindow: 
+    print('Sucsess!')
