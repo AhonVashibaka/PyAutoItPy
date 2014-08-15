@@ -27,7 +27,7 @@ from PyAutoItPy import AutoItX # Импортируем объект AutoItX
 
 Automater = AutoItX() # Инициализируем объект AutoItX, он подгрузит и настроит соотв. dll AutoIt.
 
-isMyWindow = Automater.WinExists('WindowTitle', 'WindowText') # Все функции доступны как методы объекта AutoItX, их имена                                                                    соответствуют языку AutoIt. Тут мы проверяем наличие окна.
+isMyWindow = Automater.WinExists('WindowTitle', 'WindowText') # Все функции доступны как методы объекта AutoItX, их имена соответствуют языку AutoIt. Тут мы проверяем наличие окна.
 if isMyWindow: # Шалим
     print('Sucsess!') 
 
