@@ -42,6 +42,8 @@ isMyWindow = Automater.WinExists('WindowTitle', 'WindowText')
 if isMyWindow: 
     print('Sucsess!') 
 
+Более развернутый пример с комментариями на русском языке лежит в файле example_rus.py
+
 English ReadMe
 
 AutoIt Windows and Controls functions wrapper for Python 3.3 
