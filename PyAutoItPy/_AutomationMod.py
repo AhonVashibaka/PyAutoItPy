@@ -4,7 +4,7 @@
 
 Автор: Ахон Вашибака (AhonVashibaka@gmail.com)
 
-Версия: 0.9.5 beta
+Версия: 0.9.6 beta
 """
 
 # -------------------------------------------------------------------------------
@@ -1000,7 +1000,7 @@ class AutoItX:
             в результате получим строку вида
             "0x<значение Handle>", которую можно использовать для работы с окнами вместо заголовка.
         """
-        bufSize = 18 if self.__x64__ else 10
+        bufSize = 19 if self.__x64__ else 11
         tmp = create_unicode_buffer(bufSize)
         self.__AutoItDLL__.AU3_WinGetHandleAsText(Title, Text, tmp, bufSize)
         Res = tmp.value if tmp.value != '' else None
