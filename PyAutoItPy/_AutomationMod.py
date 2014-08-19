@@ -373,11 +373,11 @@ class WinParams:
     ClientRectangle = None
     State = None
     StringID = None
-    Text = None
+    Text = ''
 
     #-------------------------------------------------------------------------------
 
-    def __init__(self, Header, Class=None, Handle=None, REtitle=False, REclass=False, Text=None):
+    def __init__(self, Header, Class=None, Handle=None, REtitle=False, REclass=False, Text=''):
         #self.SetParams(Header, Class, Handle)
         self.__HeaderPrefix__ = 'REGEXPTITLE' if REtitle else 'TITLE'
         self.__ClassPrefix__ = 'REGEXPCLASS' if REclass else 'CLASS'
@@ -387,17 +387,17 @@ class WinParams:
         self.Rectangle = WinRect(0, 0, 0, 0)
         self.ClientRectangle = WinRect(0, 0, 0, 0)
         self.State = WinState(0)
-        self.StringID = self.__FormStringID__(Header, Class)  # , Handle)
+        self.StringID = self.__FormStringID__(Header, Class, Handle)
         self.Text = Text
 
     #-------------------------------------------------------------------------------
 
     def __setattr__(self, Name, Value):
         if Name == 'StringID':
-            super().__setattr__(Name, self.__FormStringID__(self.Header, self.Class))  # , self.Handle))
-        elif Name == 'Class' or Name == 'Header':
+            super().__setattr__(Name, self.__FormStringID__(self.Header, self.Class, self.Handle))
+        elif Name == 'Class' or Name == 'Header' or Name == 'Handle':
             super().__setattr__(Name, Value)
-            super().__setattr__('StringID', self.__FormStringID__(self.Header, self.Class))  # , self.Handle))
+            super().__setattr__('StringID', self.__FormStringID__(self.Header, self.Class, self.Handle))
         else:
             super().__setattr__(Name, Value)
 
@@ -409,18 +409,18 @@ class WinParams:
         self.Rectangle = WinRect(0, 0, 0, 0)
         self.ClientRectangle = WinRect(0, 0, 0, 0)
         self.State = WinState(0)
-        self.StringID = self.__FormStringID__(Header, Class)  # , Handle)
+        self.StringID = self.__FormStringID__(Header, Class, Handle)
 
     #-------------------------------------------------------------------------------
 
-    def __FormStringID__(self, Header, Class):  # , Handle):
+    def __FormStringID__(self, Header, Class, Handle):
         Res = '['
+        if Handle and Handle != '':
+            Res += 'HANDLE:{};'.format(Handle)
         if Header and Header != '':
             Res += '{}:{};'.format(self.__HeaderPrefix__, Header)
-        if Class:
+        if Class and Class != '':
             Res += '{}:{};'.format(self.__ClassPrefix__, Class)
-        #if Handle:
-        #    Res += 'HANDLE:{};'.format(Handle)
         Res += ']'
         return Res
 
@@ -437,7 +437,7 @@ class ControlParams:
             * Instance=None - номер экземпляра (Instance) контрола.
             * Name=None - Имя контрола.
             * ID=None - Идентификатор контрола.
-            * Text=None - Текст, содержащийся в контроле, если он есть.
+            * Text='' - Текст, содержащийся в контроле, если он есть.
             * Handle=None - Handle контрола.
             * Rectangle=None - Объект с типом WinRect, содержащий координаты области контрола внутри окна.
         Свойства:
@@ -445,7 +445,7 @@ class ControlParams:
             * Instance=None - номер экземпляра (Instance) контрола.
             * Name=None - Имя контрола.
             * ID=None - Идентификатор контрола.
-            * Text=None - Текст, содержащийся в контроле, если он есть.
+            * Text='' - Текст, содержащийся в контроле, если он есть.
             * Handle=None - Handle контрола.
             * Rectangle=None - Объект с типом WinRect, содержащий координаты области контрола внутри окна.
             * StringID=None - строка, суммирующая все признаки контрола в формате AutoIt (с использованием кв. скобок,
@@ -458,7 +458,7 @@ class ControlParams:
     Instance = None
     Name = None
     ID = None
-    Text = None
+    Text = ''
     Handle = None
     Rectangle = None
     StringID = None
@@ -473,7 +473,7 @@ class ControlParams:
 
     #-------------------------------------------------------------------------------
 
-    def __init__(self, Class, Instance=1, Name=None, ID=None, Text=None, Handle=None, Rectangle=None):
+    def __init__(self, Class, Instance=1, Name=None, ID=None, Text='', Handle=None, Rectangle=None):
         if isinstance(Class, str):
             if Class.find('[') == 0 and Class.find(']') == len(Class) - 1:
                 self.SetParamsFromString(Class, Rectangle)
@@ -549,7 +549,7 @@ def AutoItCall(Mode):
                 if ModeString == 'VALUE':
                     return Res.value
                 elif ModeString == 'TRUE-FALSE':
-                    if Res == 1:
+                    if Res > 0:
                         return True
                     else:
                         return False
@@ -1123,7 +1123,7 @@ class AutoItX:
 
     #-------------------------------------------------------------------------------
 
-    @AutoItCall('RAW')
+    @AutoItCall('TRUE-FALSE')
     def WinActive(self, Title, Text=''):
         """
             Определить активно ли окно.
@@ -1135,9 +1135,9 @@ class AutoItX:
             иначе None.
 
         """
-        tmp = self.__AutoItDLL__.AU3_WinActive(Title, Text).value
-        Res = str(tmp.value) if tmp.value != 0 else None
-        return Res
+        #tmp = self.__AutoItDLL__.AU3_WinActive(Title, Text)
+        #Res = str(tmp) if tmp != 0 else None
+        return self.__AutoItDLL__.AU3_WinActive(Title, Text)
 
     #-------------------------------------------------------------------------------
 
@@ -1291,6 +1291,21 @@ class AutoItX:
             False в случае неудачи.
         """
         return self.__AutoItDLL__.AU3_WinWaitActive(Title, Text, Timeout)
+
+    #-------------------------------------------------------------------------------
+
+    def WinWaitActivePing(self, Title, Timeout, Text=''):
+        self.__AutoItDLL__.AU3_WinActivate(Title, Text)
+        isActive = self.WinActive(Title, Text)
+        #i = Timeout
+        for i in range(Timeout+1,0,-1):
+            sleep(1)
+            self.__AutoItDLL__.AU3_WinActivate(Title, Text)
+            #i -= 1
+            isActive = self.WinActive(Title, Text)
+            if isActive:
+                break
+        return isActive
 
     #-------------------------------------------------------------------------------
 
