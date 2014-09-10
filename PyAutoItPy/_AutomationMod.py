@@ -4,7 +4,7 @@
 
 Автор: Ахон Вашибака (AhonVashibaka@gmail.com)
 
-Версия: 0.9.6 beta
+Версия: 0.9.6.11 beta
 """
 
 # -------------------------------------------------------------------------------
@@ -1104,15 +1104,16 @@ class AutoItX:
         """
         tmpCtypes = c_int * 4
         ttmmpp = tmpCtypes(0, 0, 0, 0)
-        pTmp = pointer(ttmmpp)
-        self.__AutoItDLL__.AU3_WinGetClientSize(Title, Text, pTmp)
+        #pTmp = pointer(ttmmpp)
+        self.__AutoItDLL__.AU3_WinGetClientSize(Title, Text, pointer(ttmmpp))
         cwa = list(p for p in ttmmpp)
         wra = self.WinGetPos(Title, Text)
         if wra:
             ClientWidth = cwa[2]  # if cwa[2] < wra[2] else wra[2]
             ClientHeight = cwa[3]  # if cwa[3] < wra[3] else wra[3]
-            ClientX = wra[0] + (wra[2] - wra[0] - ClientWidth) // 2
-            ClientY = wra[1] + (wra[3] - wra[1] - ClientHeight) // 2
+            BorderWidth = (wra[2] - wra[0] - ClientWidth) // 2
+            ClientX = wra[0] + BorderWidth
+            ClientY = wra[3]-cwa[3]-BorderWidth #(wra[3] - wra[1] - ClientHeight) // 2
 
             return WinRect(ClientX, ClientY, ClientWidth, ClientHeight)
         else:
